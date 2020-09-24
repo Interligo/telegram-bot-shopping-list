@@ -1,0 +1,1 @@
+bot: python sl_bot_main.py
