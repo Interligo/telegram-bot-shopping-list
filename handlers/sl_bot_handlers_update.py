@@ -9,6 +9,9 @@ import sl_bot_keyboards as kb
 import sl_db_functions as db
 
 
+_global_product_name = ''  # Костыль для исправления ошибки в функции update_product_amount
+
+
 @dp.callback_query_handler(lambda call: call.data == 'update')
 async def callback_update(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -69,6 +72,15 @@ async def answer_product_amount_to_update_prev(message: types.Message, state: FS
     product_name = db.search_last_product_in_sl()
     data = await state.get_data()
     product_amount = data.get('amount')
+    # Проверяем ввод пользователя (число или нет)
+    if type(product_amount) != int:
+        try:
+            product_amount = int(product_amount)
+        except ValueError:
+            product_amount = product_amount.lower()
+            await bot.send_message(message.chat.id, f'Разве "{product_amount}" - это число?',
+                                   reply_markup=kb.update_prev_mistake_markup)
+    product_amount = str(product_amount)
     # Завершает работу с МС
     await state.finish()
     return SendMessage(message.chat.id, db.update_amount_product(product_name, product_amount),
@@ -117,6 +129,10 @@ async def answer_product_name_to_update(message: types.Message, state: FSMContex
     await state.update_data(product=message.text)
     data = await state.get_data()
     product_name = data.get("product")
+    # При повторном запуске функции answer_update_product_amount, если пользователь ввел НЕ число,
+    # product теряется, поэтому здесь глобальная переменная
+    global _global_product_name
+    _global_product_name = product_name
     if not db.search_product_in_sl(product_name):
         product_name = product_name.capitalize()
         await message.answer(f'{product_name} ещё нет в списке!', reply_markup=kb.choice_markup)
@@ -135,11 +151,10 @@ async def callback_new_product_add(call: types.CallbackQuery):
 
 # Обработка if (cancel_add)
 @dp.callback_query_handler(lambda call: call.data == 'cancel_adding')
-async def callback_back_to_menu(call: types.CallbackQuery, state: FSMContext):
+async def callback_back_to_menu(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                         reply_markup=None)
     await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-    # await state.finish()
     return SendMessage(call.message.chat.id, 'Забудем об этом! Давай лучше добавим что-нибудь в список?',
                        reply_markup=kb.start_markup)
 
@@ -182,8 +197,21 @@ async def answer_product_amount_to_update(message: types.Message, state: FSMCont
     await state.update_data(amount=message.text)
     # Получает данные из МС
     data = await state.get_data()
-    product_name = data.get('product')
+    product_name = data.get('product')  # TODO: при повторном запуске product теряется и становится None
     product_amount = data.get('amount')
+    # Если при повторном запуске функции, после некорректного ввода, product теряется, то бот копирует
+    # из заранее сохраненной глобальной переменной
+    if product_name is None:
+        product_name = _global_product_name
+    # Проверяем ввод пользователя (число или нет)
+    if type(product_amount) != int:
+        try:
+            product_amount = int(product_amount)
+        except ValueError:
+            product_amount = product_amount.lower()
+            await bot.send_message(message.chat.id, f'Разве "{product_amount}" - это число?',
+                                   reply_markup=kb.update_mistake_markup)
+    product_amount = str(product_amount)
     # Завершает работу с МС
     await state.finish()
     return SendMessage(message.chat.id, db.update_amount_product(product_name, product_amount),
