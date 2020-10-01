@@ -44,6 +44,11 @@ update_type_product = InlineKeyboardButton('Изменить категорию'
 update_markup = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(update_name_product)
 update_markup.add(update_amount_product).add(update_type_product)
 
+# Дополнительные кнопки для обработки ошибки ввода
+update_amount_mistake = InlineKeyboardButton('Ввести количество ещё раз', callback_data='update_amount')
+update_mistake_markup = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+update_mistake_markup.add(update_amount_mistake)
+
 # Кнопки для функции update_previous
 update_prev_list_callback = ["update_prev_product", "update_prev_amount", "update_prev_type"]
 update_prev_name_product = InlineKeyboardButton('Изменить название', callback_data='update_prev_product')
@@ -51,6 +56,11 @@ update_prev_amount_product = InlineKeyboardButton('Изменить количе
 update_prev_type_product = InlineKeyboardButton('Изменить категорию', callback_data='update_prev_type')
 update_prev_markup = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(update_prev_name_product)
 update_prev_markup.add(update_prev_amount_product).add(update_prev_type_product)
+
+# Дополнительные кнопки для обработки ошибки в последнем введенном
+update_prev_amount_mistake = InlineKeyboardButton('Ввести количество ещё раз', callback_data='update_prev_amount')
+update_prev_mistake_markup = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+update_prev_mistake_markup.add(update_prev_amount_mistake)
 
 # Кнопки выбора категории продукта
 type_list_callback = ["Продукты", "Овощи/фрукты", "Вкусняшки", "Бытовая химия", "Алкоголь", "Другое"]
