@@ -1,4 +1,4 @@
-# telegram-bot-shopping-list
+# Telegram bot which maintains a shopping list
 
 Personal assistant bot deploying on Heroku, using free database https://restdb.io/ and written with the framework aiogram.
 
