@@ -1,4 +1,5 @@
 from aiogram import Bot
+from aiogram import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 
@@ -11,7 +12,6 @@ dp = Dispatcher(bot, storage=storage)
 
 
 if __name__ == '__main__':
-    from aiogram import executor
     from handlers import dp
 
     executor.start_polling(dp)

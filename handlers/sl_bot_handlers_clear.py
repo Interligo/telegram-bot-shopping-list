@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.webhook import SendMessage
-# Импорт файлов с настройками
+
 from sl_bot_main import bot
 from sl_bot_main import dp
 import sl_db_functions as db

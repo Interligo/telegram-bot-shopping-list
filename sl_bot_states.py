@@ -2,7 +2,6 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 
 class OrderProduct(StatesGroup):
-
     # Состояние для добавления нового продукта в список
     waiting_for_product_name_to_add = State()
 
