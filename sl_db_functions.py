@@ -1,8 +1,13 @@
+import os
+from dotenv import load_dotenv
 import json
 import requests
 from aiogram.utils.markdown import text
 
-from sl_db_settings import URL, HEADERS
+
+load_dotenv()
+URL = os.getenv('URL')
+HEADERS = os.getenv('HEADERS')
 
 
 def show_sl():
@@ -39,7 +44,7 @@ def update_name_product(product_name: str, new_product_name: str):
     new_product_name = new_product_name.lower()
 
     search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=" + search
+    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
@@ -57,7 +62,7 @@ def update_amount_product(product_name: str, product_amount: str):
     product_amount = int(product_amount)
 
     search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=" + search
+    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
@@ -113,7 +118,7 @@ def delete_from_sl(product_name: str):
     """ Функция удаляет объект из БД """
     product_name = product_name.lower()
     search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=" + search
+    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']

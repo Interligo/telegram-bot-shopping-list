@@ -1,12 +1,13 @@
+import os
+from dotenv import load_dotenv
 from aiogram import Bot
 from aiogram import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 
-from sl_bot_settings import TELEGRAM_TOKEN
 
-
-bot = Bot(token=TELEGRAM_TOKEN)
+load_dotenv()
+bot = Bot(token=os.getenv('TELEGRAM_TOKEN'))
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 

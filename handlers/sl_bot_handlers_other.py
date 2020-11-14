@@ -1,14 +1,19 @@
+import os
+from dotenv import load_dotenv
 from aiogram import types
 from aiogram.dispatcher.webhook import SendMessage, SendPhoto
 from aiogram.utils.markdown import text
 
 from sl_bot_main import dp
-from sl_bot_settings import ADMIN_ID
 import sl_bot_keyboards as kb
+
+
+load_dotenv()
 
 
 @dp.message_handler(commands=['start'])
 async def greet_user(message: types.Message):
+    ADMIN_ID = os.getenv('ADMIN_ID')
     if str(message.from_user.id) in ADMIN_ID:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
                                             f'Чем я могу помочь?', reply_markup=kb.start_markup)
