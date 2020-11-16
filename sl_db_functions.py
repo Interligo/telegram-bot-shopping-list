@@ -1,13 +1,8 @@
-import os
-from dotenv import load_dotenv
 import json
 import requests
 from aiogram.utils.markdown import text
 
-
-load_dotenv()
-URL = os.getenv('URL')
-HEADERS = os.getenv('HEADERS')
+from sl_db_settings import URL, HEADERS
 
 
 def show_sl():
