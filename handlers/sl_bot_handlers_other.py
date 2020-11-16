@@ -14,8 +14,9 @@ load_dotenv(dotenv_path)
 
 @dp.message_handler(commands=['start'])
 async def greet_user(message: types.Message):
-    ADMIN_ID = os.getenv('ADMIN_ID')
-    if str(message.from_user.id) in ADMIN_ID:
+    valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID'), os.getenv('COLLABORATOR_ID')
+
+    if str(message.from_user.id) in valid_ids:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
                                             f'Чем я могу помочь?', reply_markup=kb.start_markup)
     else:
