@@ -10,12 +10,11 @@ import sl_bot_keyboards as kb
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
+valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID'), os.getenv('COLLABORATOR_ID')
 
 
 @dp.message_handler(commands=['start'])
 async def greet_user(message: types.Message):
-    valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID'), os.getenv('COLLABORATOR_ID')
-
     if str(message.from_user.id) in valid_ids:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
                                             f'Чем я могу помочь?', reply_markup=kb.start_markup)
@@ -52,7 +51,7 @@ async def test_command(message: types.Message):
 
 @dp.message_handler(commands=['boobs'])
 async def show_boobs(message: types.Message):
-    if str(message.from_user.id) in ADMIN_ID:
+    if str(message.from_user.id) in valid_ids:
         boobs_url = "http://img.177pic.info/uploads/2020/07a/a055-210.jpg"
         return SendPhoto(message.chat.id, photo=boobs_url)
     else:
