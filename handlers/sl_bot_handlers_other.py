@@ -8,7 +8,8 @@ from sl_bot_main import dp
 import sl_bot_keyboards as kb
 
 
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 
 @dp.message_handler(commands=['start'])
