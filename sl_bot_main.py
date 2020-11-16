@@ -7,7 +7,8 @@ from aiogram.dispatcher import Dispatcher
 
 
 load_dotenv()
-bot = Bot(token=os.getenv('TELEGRAM_TOKEN'))
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+bot = Bot(token=TELEGRAM_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
