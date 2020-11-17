@@ -2,7 +2,10 @@ import json
 import requests
 from aiogram.utils.markdown import text
 
-from sl_db_settings import URL, HEADERS
+from sl_db_settings import URL, SEARCH_URL, HEADERS
+
+
+SHORT_SEARCH_URL = SEARCH_URL[:len(SEARCH_URL) - 3]  # Для унификации поиска в функциях
 
 
 def show_sl():
@@ -38,14 +41,14 @@ def update_name_product(product_name: str, new_product_name: str):
     product_name = product_name.lower()
     new_product_name = new_product_name.lower()
 
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
 
-    url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist/' + product_id
+    url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': new_product_name, 'Amount': product_amount})
     response = requests.request('PUT', url, data=payload, headers=HEADERS)
     return f'Я исправила название: {product_name} на {new_product_name}. Что-нибудь ещё сделать?'
@@ -56,13 +59,13 @@ def update_amount_product(product_name: str, product_amount: str):
     product_name = product_name.lower()
     product_amount = int(product_amount)
 
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
 
-    url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist/" + product_id
+    url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount})
     response = requests.request('PUT', url, data=payload, headers=HEADERS)
     return f'Я изменила количество, теперь оно составляет {product_amount} шт. Что-нибудь ещё?'
@@ -72,15 +75,15 @@ def count_up_amount_product(product_name: str):
     """ Функция обновляет объект в БД (изменяет количество на +1) """
     product_name = product_name.lower()
 
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=" + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
     product_amount += 1
 
-    url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist/' + product_id
+    url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount})
     response = requests.request('PUT', url, data=payload, headers=HEADERS)
     return f'Я увеличила количество на один, теперь оно составляет {product_amount} шт. Что-нибудь ещё?'
@@ -95,14 +98,14 @@ def update_type_product(product_name: str, new_product_type: str):
             new_product_type = ru
     product_name = product_name.lower()
 
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
 
-    url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist/' + product_id
+    url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount, 'Category': new_product_type})
     response = requests.request('PUT', url, data=payload, headers=HEADERS)
     new_product_type = new_product_type.lower()
@@ -112,20 +115,20 @@ def update_type_product(product_name: str, new_product_type: str):
 def delete_from_sl(product_name: str):
     """ Функция удаляет объект из БД """
     product_name = product_name.lower()
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
 
-    url = "https://shoppinglist-c382.restdb.io/rest/shoppinglist/" + product_id
+    url = SHORT_SEARCH_URL + '/' + product_id
     response = requests.request('DELETE', url, headers=HEADERS)
     return f'Убрала {product_name} из списка. Что-нибудь ещё?'
 
 
 def clear_sl():
     """ Функция очищает БД """
-    url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist/*?q={}'
+    url = SHORT_SEARCH_URL + '/*?q={}'
     response = requests.request('DELETE', url, headers=HEADERS)
     return 'Очистила список... Возвращайся скорее. Я буду скучать!'
 
@@ -134,8 +137,8 @@ def search_product_in_sl(product_name: str):
     """ Функция ищет объект в БД и возвращает True/False"""
     product_name = product_name.lower()
 
-    search = json.dumps({'Product': {'$regex': product_name}})
-    search_url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?q=' + search
+    search_data = json.dumps({'Product': {'$regex': product_name}})
+    search_url = SEARCH_URL + search_data
 
     response = requests.request('GET', search_url, headers=HEADERS)
     if not response.json():
@@ -146,7 +149,7 @@ def search_product_in_sl(product_name: str):
 
 def search_last_product_in_sl():
     """ Функция находит последний добавленный продукт и возвращает наименование продукта """
-    url = 'https://shoppinglist-c382.restdb.io/rest/shoppinglist?metafields=true'  # URL с доступом к "_created"
+    url = SHORT_SEARCH_URL + '?metafields=true'  # URL с доступом к "_created"
     response = requests.request('GET', url, headers=HEADERS)
     products_count = len(response.json())
     last_product_time = '2020-01-01T00:00:00.576Z'
