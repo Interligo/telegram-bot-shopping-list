@@ -51,7 +51,7 @@ async def test_command(message: types.Message):
 
 @dp.message_handler(commands=['boobs'])
 async def show_boobs(message: types.Message):
-    if str(message.from_user.id) in valid_ids:
+    if str(message.from_user.id) == str(os.getenv('ADMIN_ID')):
         boobs_url = "http://img.177pic.info/uploads/2020/07a/a055-210.jpg"
         return SendPhoto(message.chat.id, photo=boobs_url)
     else:
