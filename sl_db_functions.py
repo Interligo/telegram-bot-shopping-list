@@ -9,7 +9,7 @@ SHORT_SEARCH_URL = SEARCH_URL[:len(SEARCH_URL) - 3]  # Для унификаци
 
 
 def show_sl():
-    """ Функция показывает весь список покупок """
+    """Функция показывает весь список покупок."""
     response = requests.request('GET', URL, headers=HEADERS)
     products_count = len(response.json())
     text_from_db = 'Список покупок:\n\n'
@@ -26,7 +26,7 @@ def show_sl():
 
 
 def add_to_sl(product_name: str, product_amount: str, product_type: str):
-    """ Функция добавляет новый объект в БД (название и количество - обязательные поля) """
+    """Функция добавляет новый объект в БД (название и количество - обязательные поля)."""
     product_name = product_name.lower()
     product_type = product_type.capitalize()
     if product_type not in ('Алкоголь', 'Продукты', 'Овощи/фрукты', 'Вкусняшки', 'Бытовая химия'):
@@ -37,7 +37,7 @@ def add_to_sl(product_name: str, product_amount: str, product_type: str):
 
 
 def update_name_product(product_name: str, new_product_name: str):
-    """ Функция обновляет объект в БД (изменяет наименование) """
+    """Функция обновляет объект в БД (изменяет наименование)."""
     product_name = product_name.lower()
     new_product_name = new_product_name.lower()
 
@@ -55,7 +55,7 @@ def update_name_product(product_name: str, new_product_name: str):
 
 
 def update_amount_product(product_name: str, product_amount: str):
-    """ Функция обновляет объект в БД (изменяет количество) """
+    """Функция обновляет объект в БД (изменяет количество)."""
     product_name = product_name.lower()
     product_amount = int(product_amount)
 
@@ -72,7 +72,7 @@ def update_amount_product(product_name: str, product_amount: str):
 
 
 def count_up_amount_product(product_name: str):
-    """ Функция обновляет объект в БД (изменяет количество на +1) """
+    """Функция обновляет объект в БД (изменяет количество на +1)."""
     product_name = product_name.lower()
 
     search_data = json.dumps({'Product': {'$regex': product_name}})
@@ -90,7 +90,7 @@ def count_up_amount_product(product_name: str):
 
 
 def update_type_product(product_name: str, new_product_type: str):
-    """ Функция обновляет объект в БД (изменяет категорию) """
+    """Функция обновляет объект в БД (изменяет категорию)."""
     type_list_eng = ['food', 'vegetables', 'delicious', 'chemicals', 'alcohol', 'another']
     type_list_ru = ['Продукты', 'Овощи/фрукты', 'Вкусняшки', 'Бытовая химия', 'Алкоголь', 'Другое']
     for eng, ru in zip(type_list_eng, type_list_ru):
@@ -113,7 +113,7 @@ def update_type_product(product_name: str, new_product_type: str):
 
 
 def delete_from_sl(product_name: str):
-    """ Функция удаляет объект из БД """
+    """Функция удаляет объект из БД."""
     product_name = product_name.lower()
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
@@ -127,14 +127,14 @@ def delete_from_sl(product_name: str):
 
 
 def clear_sl():
-    """ Функция очищает БД """
+    """Функция очищает БД."""
     url = SHORT_SEARCH_URL + '/*?q={}'
     response = requests.request('DELETE', url, headers=HEADERS)
     return 'Очистила список... Возвращайся скорее. Я буду скучать!'
 
 
 def search_product_in_sl(product_name: str):
-    """ Функция ищет объект в БД и возвращает True/False"""
+    """Функция ищет объект в БД и возвращает True/False."""
     product_name = product_name.lower()
 
     search_data = json.dumps({'Product': {'$regex': product_name}})
@@ -148,7 +148,7 @@ def search_product_in_sl(product_name: str):
 
 
 def search_last_product_in_sl():
-    """ Функция находит последний добавленный продукт и возвращает наименование продукта """
+    """Функция находит последний добавленный продукт и возвращает наименование продукта."""
     url = SHORT_SEARCH_URL + '?metafields=true'  # URL с доступом к "_created"
     response = requests.request('GET', url, headers=HEADERS)
     products_count = len(response.json())
