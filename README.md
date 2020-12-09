@@ -1,4 +1,6 @@
-# Telegram bot to make and keep a shopping list
+# Telegram bot to make and keep a shopping list 
+
+![Python 3.7](https://img.shields.io/badge/python-v3.7-blue) ![Aiogram 2.9.2](https://img.shields.io/badge/aiogram-v2.9.2-yellow)
 
 ### What is this:
 
