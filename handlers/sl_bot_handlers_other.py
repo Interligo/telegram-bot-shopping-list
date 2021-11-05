@@ -16,6 +16,16 @@ valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID'), os.getenv('COLLABORATOR
 @dp.message_handler(commands=['start'])
 async def greet_user(message: types.Message):
     if str(message.from_user.id) in valid_ids:
+        return SendMessage(message.chat.id, db.show_sl(), reply_markup=kb.show_markup)
+    else:
+        return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Я тебя не знаю, поэтому мы '
+                                            f'можем с тобой немного поговорить, но к большинству функций тебе '
+                                            f'доступ закрыт.')
+
+
+@dp.message_handler(commands=['show'])
+async def show_shopping_list(message: types.Message):
+    if str(message.from_user.id) in valid_ids:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
                                             f'Чем я могу помочь?', reply_markup=kb.start_markup)
     else:
@@ -33,7 +43,7 @@ async def send_user_id(message: types.Message):
 @dp.message_handler(commands=['help'])
 async def help_command(message: types.Message):
     return SendMessage(message.chat.id,
-                       text('Я - бот-ассистент, могу подсказать некоторые команды:', '/start', '/cancel' '/id',
+                       text('Я - бот-ассистент, могу подсказать некоторые команды:', '/start', '/show', '/cancel', '/id',
                             'Есть ещё парочка секретных команд, но если ты их не знаешь... Тогда обойдемся без них.',
                             'Если остались какие-то вопросы, то можешь 👇',
                             sep='\n'), reply_markup=kb.contact_dev_kb)
