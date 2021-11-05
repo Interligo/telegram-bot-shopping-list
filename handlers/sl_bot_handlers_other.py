@@ -10,13 +10,14 @@ import sl_bot_keyboards as kb
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
-valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID'), os.getenv('COLLABORATOR_ID')
+valid_ids = os.getenv('ADMIN_ID'), os.getenv('USER_ID')
 
 
 @dp.message_handler(commands=['start'])
 async def greet_user(message: types.Message):
     if str(message.from_user.id) in valid_ids:
-        return SendMessage(message.chat.id, db.show_sl(), reply_markup=kb.show_markup)
+        return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
+                                            f'Чем я могу помочь?', reply_markup=kb.start_markup)
     else:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Я тебя не знаю, поэтому мы '
                                             f'можем с тобой немного поговорить, но к большинству функций тебе '
@@ -26,8 +27,7 @@ async def greet_user(message: types.Message):
 @dp.message_handler(commands=['show'])
 async def show_shopping_list(message: types.Message):
     if str(message.from_user.id) in valid_ids:
-        return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Рада тебя видеть. '
-                                            f'Чем я могу помочь?', reply_markup=kb.start_markup)
+        await bot.send_message(call.message.chat.id, db.show_sl(), reply_markup=kb.show_markup)
     else:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Я тебя не знаю, поэтому мы '
                                             f'можем с тобой немного поговорить, но к большинству функций тебе '
