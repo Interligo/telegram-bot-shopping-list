@@ -1,7 +1,6 @@
 import json
 import requests
 import datetime
-import locale
 
 from aiogram.utils.markdown import text
 
@@ -13,17 +12,18 @@ SHORT_SEARCH_URL = SEARCH_URL[:len(SEARCH_URL) - 3]
 
 
 def get_current_date():
-    """Функция получает текущий день и время, а затем переводит их в понятный для человека вид."""
-    locale.setlocale(locale.LC_ALL, 'ru')
-    day_name = datetime.datetime.today().strftime('%A')
+    """Функция получает и передает текущее время."""
     current_time = datetime.datetime.today().time().strftime('%X')
-    current_date = f'Отчет сформирован: {day_name}, {current_time}.'
-    return current_date
+    return f'Отчет сформирован: {current_time}.'
 
 
 def show_sl():
     """Функция показывает весь список покупок."""
     response = requests.request('GET', URL, headers=HEADERS)
+
+    if response.status_code != 200:
+        return 'Не удалось получить информацию из базы данных!'
+
     products_count = len(response.json())
     text_from_db = 'Список покупок:\n\n'
     current_date = get_current_date()
