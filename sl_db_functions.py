@@ -24,10 +24,6 @@ def get_current_date():
 def show_sl():
     """Функция показывает весь список покупок."""
     response = requests.request('GET', URL, headers=HEADERS)
-    
-    if response.status_code != 200:
-        return 'Не удалось получить информацию из базы данных!'
-
     products_count = len(response.json())
     text_from_db = 'Список покупок:\n\n'
     current_date = get_current_date()

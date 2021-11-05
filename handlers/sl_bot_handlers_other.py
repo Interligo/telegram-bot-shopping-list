@@ -27,7 +27,7 @@ async def greet_user(message: types.Message):
 @dp.message_handler(commands=['show'])
 async def show_shopping_list(message: types.Message):
     if str(message.from_user.id) in valid_ids:
-        await bot.send_message(call.message.chat.id, db.show_sl(), reply_markup=kb.show_markup)
+        await SendMessage(message.chat.id, db.show_sl(), reply_markup=kb.show_markup)
     else:
         return SendMessage(message.chat.id, f'Привет, {message.from_user.first_name}! Я тебя не знаю, поэтому мы '
                                             f'можем с тобой немного поговорить, но к большинству функций тебе '
