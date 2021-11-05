@@ -11,12 +11,6 @@ from sl_db_settings import URL, SEARCH_URL, HEADERS
 SHORT_SEARCH_URL = SEARCH_URL[:len(SEARCH_URL) - 3]
 
 
-def get_current_date():
-    """Функция получает и передает текущее время."""
-    current_time = datetime.datetime.today().time().strftime('%X')
-    return f'Отчет сформирован: {current_time}.'
-
-
 def show_sl():
     """Функция показывает весь список покупок."""
     response = requests.request('GET', URL, headers=HEADERS)
@@ -26,7 +20,6 @@ def show_sl():
 
     products_count = len(response.json())
     text_from_db = 'Список покупок:\n\n'
-    current_date = get_current_date()
 
     if not response.json():
         return 'Список покупок пуст. Добавим что-нибудь?'
@@ -36,7 +29,6 @@ def show_sl():
                                  response.json()[i]['Amount'], ' шт.', sep='')
             text_from_db += '\n'
         text_from_db += '\nДобавим что-нибудь в список?'
-        text_from_db += '\n' + current_date
         return text_from_db
 
 

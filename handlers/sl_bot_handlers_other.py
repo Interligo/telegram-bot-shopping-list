@@ -5,6 +5,7 @@ from aiogram.dispatcher.webhook import SendMessage, SendPhoto
 from aiogram.utils.markdown import text
 
 from sl_bot_main import dp
+import sl_db_functions as db
 import sl_bot_keyboards as kb
 
 
