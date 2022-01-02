@@ -17,7 +17,7 @@ async def callback_del(call: types.CallbackQuery):
     await bot.send_message(call.message.chat.id, 'Выбери, что хочешь удалить.', reply_markup=kb.del_prev_any_markup)
 
 
-# Обработка callback (удалить последний введенный продукт)
+# Обработка callback (удалить последний введенный продукт).
 @dp.callback_query_handler(lambda call: call.data == 'del_previous')
 async def callback_del_previous(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -27,7 +27,7 @@ async def callback_del_previous(call: types.CallbackQuery):
     await bot.send_message(call.message.chat.id, db.delete_from_sl(product_name), reply_markup=kb.start_markup)
 
 
-# Обработка callback (удалить продукт)
+# Обработка callback (удалить продукт).
 @dp.callback_query_handler(lambda call: call.data == 'del_any')
 async def callback_del_any_product(call: types.CallbackQuery):
     await OrderProduct.waiting_for_product_name_to_del.set()

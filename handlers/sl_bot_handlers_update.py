@@ -9,7 +9,8 @@ import sl_bot_keyboards as kb
 import sl_db_functions as db
 
 
-_global_product_name = ''  # Костыль для исправления ошибки в функции update_product_amount
+# Для исправления ошибки в функции update_product_amount.
+_global_product_name = ''
 
 
 @dp.callback_query_handler(lambda call: call.data == 'update')
@@ -20,7 +21,7 @@ async def callback_update(call: types.CallbackQuery):
     return SendMessage(call.message.chat.id, 'Выбери, что хочешь изменить.', reply_markup=kb.update_prev_any_markup)
 
 
-# Обработка callback (изменить последний введенный продукт)
+# Обработка callback (изменить последний введенный продукт).
 @dp.callback_query_handler(lambda call: call.data == 'update_previous')
 async def callback_update_previous(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -31,7 +32,7 @@ async def callback_update_previous(call: types.CallbackQuery):
                            reply_markup=kb.update_prev_markup)
 
 
-# Начало блока обработки функции update_prev_product
+# Начало блока обработки функции update_prev_product.
 @dp.callback_query_handler(lambda call: call.data == 'update_prev_product')
 async def callback_update_prev_name(call: types.CallbackQuery):
     await OrderProduct.waiting_for_product_name_to_update_prev.set()
@@ -50,10 +51,10 @@ async def answer_product_name_to_update_prev(message: types.Message, state: FSMC
     await state.finish()
     return SendMessage(message.chat.id, db.update_name_product(product_name, new_product_name),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_prev_product
+# Конец блока обработки функции update_prev_product.
 
 
-# Начало блока обработки функции update_prev_amount
+# Начало блока обработки функции update_prev_amount.
 @dp.callback_query_handler(lambda call: call.data == 'update_prev_amount')
 async def callback_update_amount_prev(call: types.CallbackQuery):
     await OrderProduct.waiting_for_product_amount_to_update_prev.set()
@@ -80,10 +81,10 @@ async def answer_product_amount_to_update_prev(message: types.Message, state: FS
     await state.finish()
     return SendMessage(message.chat.id, db.update_amount_product(product_name, product_amount),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_prev_amount
+# Конец блока обработки функции update_prev_amount.
 
 
-# Начало блока обработки функции update_prev_type
+# Начало блока обработки функции update_prev_type.
 @dp.callback_query_handler(lambda call: call.data == 'update_prev_type')
 async def callback_update_type_prev(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -101,14 +102,15 @@ async def callback_type(call: types.CallbackQuery, state: FSMContext):
     product_name = db.search_last_product_in_sl()
     data = await state.get_data()
     product_type = data.get("type")
-    product_type = product_type[:-1]  # Убираем лишний символ для унификации категорий
+    # Убираем лишний символ для унификации категорий.
+    product_type = product_type[:-1]
     await state.finish()
     return SendMessage(call.message.chat.id, db.update_type_product(product_name, product_type),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_prev_amount
+# Конец блока обработки функции update_prev_amount.
 
 
-# Обработка callback (изменить другой продукт)
+# Обработка callback (изменить другой продукт).
 @dp.callback_query_handler(lambda call: call.data == 'update_any')
 async def callback_update_any(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -124,7 +126,7 @@ async def answer_product_name_to_update(message: types.Message, state: FSMContex
     data = await state.get_data()
     product_name = data.get("product")
     # При повторном запуске функции answer_update_product_amount, если пользователь ввел НЕ число,
-    # product теряется, поэтому здесь глобальная переменная
+    # product теряется, поэтому здесь глобальная переменная.
     global _global_product_name
     _global_product_name = product_name
     if not db.search_product_in_sl(product_name):
@@ -136,7 +138,7 @@ async def answer_product_name_to_update(message: types.Message, state: FSMContex
         await state.reset_state(with_data=False)
 
 
-# Обработка if (add_product)
+# Обработка if (add_product).
 @dp.callback_query_handler(lambda call: call.data == 'add_product')
 async def callback_new_product_add(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -145,7 +147,7 @@ async def callback_new_product_add(call: types.CallbackQuery):
     await call.message.answer("Сколько добавить в список?", reply_markup=kb.amount_markup)
 
 
-# Обработка if (cancel_add)
+# Обработка if (cancel_add).
 @dp.callback_query_handler(lambda call: call.data == 'cancel_adding')
 async def callback_back_to_menu(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -155,8 +157,8 @@ async def callback_back_to_menu(call: types.CallbackQuery):
                        reply_markup=kb.start_markup)
 
 
-# Обработка else
-# Начало блока обработки функции update_product
+# Обработка else.
+# Начало блока обработки функции update_product.
 @dp.callback_query_handler(lambda call: call.data == 'update_product')
 async def callback_update_name(call: types.CallbackQuery):
     await OrderProduct.waiting_for_product_new_name_to_update.set()
@@ -175,10 +177,10 @@ async def answer_product_new_name_to_update(message: types.Message, state: FSMCo
     await state.finish()
     return SendMessage(message.chat.id, db.update_name_product(product_name, new_product_name),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_product
+# Конец блока обработки функции update_product.
 
 
-# Начало блока обработки функции update_amount
+# Начало блока обработки функции update_amount.
 @dp.callback_query_handler(lambda call: call.data == 'update_amount')
 async def callback_update_amount(call: types.CallbackQuery):
     await OrderProduct.waiting_for_product_amount_to_update.set()
@@ -195,7 +197,7 @@ async def answer_product_amount_to_update(message: types.Message, state: FSMCont
     product_name = data.get('product')
     product_amount = data.get('amount')
     # Если при повторном запуске функции, после некорректного ввода, product теряется, то бот копирует
-    # из заранее сохраненной глобальной переменной
+    # из заранее сохраненной глобальной переменной.
     if product_name is None:
         product_name = _global_product_name
     if type(product_amount) != int:
@@ -209,10 +211,10 @@ async def answer_product_amount_to_update(message: types.Message, state: FSMCont
     await state.finish()
     return SendMessage(message.chat.id, db.update_amount_product(product_name, product_amount),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_amount
+# Конец блока обработки функции update_amount.
 
 
-# Начало блока обработки функции update_type
+# Начало блока обработки функции update_type.
 @dp.callback_query_handler(lambda call: call.data == 'update_type')
 async def callback_update_type(call: types.CallbackQuery):
     await bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -233,4 +235,4 @@ async def callback_type(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
     return SendMessage(call.message.chat.id, db.update_type_product(product_name, product_type),
                        reply_markup=kb.start_markup)
-# Конец блока обработки функции update_amount
+# Конец блока обработки функции update_amount.

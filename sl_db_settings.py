@@ -5,4 +5,3 @@ HEADERS = {
     'x-apikey': 'acdc84186c4184fd103c4918fae744d0a7b40',
     'cache-control': 'no-cache'
     }
-    

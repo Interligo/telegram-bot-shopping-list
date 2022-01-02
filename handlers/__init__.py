@@ -5,4 +5,4 @@ from .sl_bot_handlers_del import dp
 from .sl_bot_handlers_clear import dp
 from .sl_bot_handlers_other import dp
 
-__all__ = ["dp"]
+__all__ = ['dp']

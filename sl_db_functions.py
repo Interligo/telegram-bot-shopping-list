@@ -1,19 +1,18 @@
 import json
-import requests
-import datetime
+from requests import request
 
 from aiogram.utils.markdown import text
 
 from sl_db_settings import URL, SEARCH_URL, HEADERS
 
 
-# Для унификации поиска в функциях
+# Для унификации поиска в функциях.
 SHORT_SEARCH_URL = SEARCH_URL[:len(SEARCH_URL) - 3]
 
 
-def show_sl():
+def show_sl() -> str:
     """Функция показывает весь список покупок."""
-    response = requests.request('GET', URL, headers=HEADERS)
+    response = request('GET', URL, headers=HEADERS)
 
     if response.status_code != 200:
         return 'Не удалось получить информацию из базы данных!'
@@ -29,21 +28,25 @@ def show_sl():
                                  response.json()[i]['Amount'], ' шт.', sep='')
             text_from_db += '\n'
         text_from_db += '\nДобавим что-нибудь в список?'
+
         return text_from_db
 
 
-def add_to_sl(product_name: str, product_amount: str, product_type: str):
+def add_to_sl(product_name: str, product_amount: str, product_type: str) -> str:
     """Функция добавляет новый объект в БД (название и количество - обязательные поля)."""
     product_name = product_name.lower()
     product_type = product_type.capitalize()
+
     if product_type not in ('Алкоголь', 'Продукты', 'Овощи/фрукты', 'Вкусняшки', 'Бытовая химия'):
         product_type = 'Другое'
+
     payload = json.dumps({'Product': product_name, 'Amount': product_amount, 'Category': product_type})
-    response = requests.request('POST', URL, data=payload, headers=HEADERS)
+    request('POST', URL, data=payload, headers=HEADERS)
+
     return f'Записала {product_name} в список. Продолжим?'
 
 
-def update_name_product(product_name: str, new_product_name: str):
+def update_name_product(product_name: str, new_product_name: str) -> str:
     """Функция обновляет объект в БД (изменяет наименование)."""
     product_name = product_name.lower()
     new_product_name = new_product_name.lower()
@@ -51,17 +54,18 @@ def update_name_product(product_name: str, new_product_name: str):
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
 
     url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': new_product_name, 'Amount': product_amount})
-    response = requests.request('PUT', url, data=payload, headers=HEADERS)
+    request('PUT', url, data=payload, headers=HEADERS)
+
     return f'Я исправила название: {product_name} на {new_product_name}. Что-нибудь ещё сделать?'
 
 
-def update_amount_product(product_name: str, product_amount: str):
+def update_amount_product(product_name: str, product_amount: str) -> str:
     """Функция обновляет объект в БД (изменяет количество)."""
     product_name = product_name.lower()
     product_amount = int(product_amount)
@@ -69,34 +73,36 @@ def update_amount_product(product_name: str, product_amount: str):
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
 
     url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount})
-    response = requests.request('PUT', url, data=payload, headers=HEADERS)
+    request('PUT', url, data=payload, headers=HEADERS)
+
     return f'Я изменила количество, теперь оно составляет {product_amount} шт. Что-нибудь ещё?'
 
 
-def count_up_amount_product(product_name: str):
+def count_up_amount_product(product_name: str) -> str:
     """Функция обновляет объект в БД (изменяет количество на +1)."""
     product_name = product_name.lower()
 
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
     product_amount += 1
 
     url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount})
-    response = requests.request('PUT', url, data=payload, headers=HEADERS)
+    request('PUT', url, data=payload, headers=HEADERS)
+
     return f'Я увеличила количество на один, теперь оно составляет {product_amount} шт. Что-нибудь ещё?'
 
 
-def update_type_product(product_name: str, new_product_type: str):
+def update_type_product(product_name: str, new_product_type: str) -> str:
     """Функция обновляет объект в БД (изменяет категорию)."""
     type_list_eng = ['food', 'vegetables', 'delicious', 'chemicals', 'alcohol', 'another']
     type_list_ru = ['Продукты', 'Овощи/фрукты', 'Вкусняшки', 'Бытовая химия', 'Алкоголь', 'Другое']
@@ -108,59 +114,64 @@ def update_type_product(product_name: str, new_product_type: str):
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
     product_amount = response.json()[0]['Amount']
 
     url = SHORT_SEARCH_URL + '/' + product_id
     payload = json.dumps({'Product': product_name, 'Amount': product_amount, 'Category': new_product_type})
-    response = requests.request('PUT', url, data=payload, headers=HEADERS)
+    request('PUT', url, data=payload, headers=HEADERS)
     new_product_type = new_product_type.lower()
+
     return f'Я исправила категорию {product_name} на {new_product_type}. Чем ещё могу помочь?'
 
 
-def delete_from_sl(product_name: str):
+def delete_from_sl(product_name: str) -> str:
     """Функция удаляет объект из БД."""
     product_name = product_name.lower()
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
     product_id = response.json()[0]['_id']
 
     url = SHORT_SEARCH_URL + '/' + product_id
-    response = requests.request('DELETE', url, headers=HEADERS)
+    request('DELETE', url, headers=HEADERS)
+
     return f'Убрала {product_name} из списка. Что-нибудь ещё?'
 
 
-def clear_sl():
+def clear_sl() -> str:
     """Функция очищает БД."""
     url = SHORT_SEARCH_URL + '/*?q={}'
-    response = requests.request('DELETE', url, headers=HEADERS)
-    return 'Очистила список... Возвращайся скорее. Я буду скучать!'
+    request('DELETE', url, headers=HEADERS)
+    return 'Список очищен!'
 
 
-def search_product_in_sl(product_name: str):
+def search_product_in_sl(product_name: str) -> bool:
     """Функция ищет объект в БД и возвращает True/False."""
     product_name = product_name.lower()
 
     search_data = json.dumps({'Product': {'$regex': product_name}})
     search_url = SEARCH_URL + search_data
 
-    response = requests.request('GET', search_url, headers=HEADERS)
+    response = request('GET', search_url, headers=HEADERS)
+
     if not response.json():
         return False
     else:
         return True
 
 
-def search_last_product_in_sl():
+def search_last_product_in_sl() -> str:
     """Функция находит последний добавленный продукт и возвращает наименование продукта."""
-    url = SHORT_SEARCH_URL + '?metafields=true'  # URL с доступом к "_created"
-    response = requests.request('GET', url, headers=HEADERS)
+    # URL с доступом к "_created".
+    url = SHORT_SEARCH_URL + '?metafields=true'
+    response = request('GET', url, headers=HEADERS)
     products_count = len(response.json())
     last_product_time = '2020-01-01T00:00:00.576Z'
     last_product_name = ''
+
     if not response.json():
         return 'Список покупок пуст.'
     else:
