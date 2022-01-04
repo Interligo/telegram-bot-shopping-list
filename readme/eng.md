@@ -39,6 +39,6 @@ Now go to the [handler](https://github.com/Interligo/telegram-bot-shopping-list/
 
 And let's deploy the bot on Heroku - `git push heroku main`.
 
-You can check the bot status `heroku ps` and read the logs 'heroku logs'.
+You can check the bot status `heroku ps` and read the logs `heroku logs`.
 
 __All additional information you can get in [heroku docs](https://devcenter.heroku.com/)__.
